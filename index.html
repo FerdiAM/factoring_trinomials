@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinomial Factoring Lab - Master the AC Method</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for rendered Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .katex-display {
+            margin: 0.5em 0 !important;
+        }
+        .diamond-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 4px;
+            width: 180px;
+            height: 180px;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid font-bold fa-square-root-variable text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
+                        Factor Lab
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Interactive Trinomial AC Method Master</p>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="flex items-center space-x-3 sm:space-x-6 text-sm">
+                <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
+                    <i class="fa-solid fa-fire text-amber-500"></i>
+                    <span class="text-slate-400 text-xs font-medium">Streak:</span>
+                    <span id="streak-count" class="font-bold text-amber-400">0</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
+                    <i class="fa-solid fa-star text-indigo-400"></i>
+                    <span class="text-slate-400 text-xs font-medium">XP:</span>
+                    <span id="score-count" class="font-bold text-indigo-300">0</span>
+                </div>
+                <button id="reset-stats-btn" title="Reset Progress" class="text-slate-500 hover:text-slate-300 transition-colors p-1.5">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Practice Workspace (8 cols) -->
+        <section class="lg:col-span-8 flex flex-col space-y-6">
+
+            <!-- Control Header Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+                <!-- Level Selector -->
+                <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 w-full sm:w-auto">
+                    <button id="level-a1-btn" class="flex-1 sm:flex-none px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md">
+                        <i class="fa-solid fa-1 mr-1"></i> Level 1: <span class="font-normal opacity-90">$a = 1$</span>
+                    </button>
+                    <button id="level-aNot1-btn" class="flex-1 sm:flex-none px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-slate-200">
+                        <i class="fa-solid fa-layer-group mr-1"></i> Level 2: <span class="font-normal opacity-90">$a \neq 1$</span>
+                    </button>
+                    <button id="level-gcf-btn" class="flex-1 sm:flex-none px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-slate-200">
+                        <i class="fa-solid fa-cubes mr-1"></i> Level 3: <span class="font-normal opacity-90">GCF First</span>
+                    </button>
+                </div>
+
+                <!-- Practice Mode Toggle -->
+                <div class="flex items-center space-x-2 text-xs sm:text-sm">
+                    <span class="text-slate-400 font-medium">Mode:</span>
+                    <div class="bg-slate-950 p-1 rounded-xl border border-slate-800 flex">
+                        <button id="mode-guided-btn" class="px-3 py-1.5 rounded-lg font-medium text-xs bg-slate-800 text-indigo-300 border border-slate-700">
+                            <i class="fa-solid fa-list-check mr-1"></i> Guided Steps
+                        </button>
+                        <button id="mode-direct-btn" class="px-3 py-1.5 rounded-lg font-medium text-xs text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-bolt mr-1"></i> Fast Answer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem Display Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                
+                <div class="flex items-center justify-between w-full text-xs text-slate-400 font-medium mb-3">
+                    <span id="problem-level-badge" class="px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                        Simple AC Method ($a = 1$)
+                    </span>
+                    <button id="new-problem-btn" class="text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 hover:underline">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span>New Problem</span>
+                    </button>
+                </div>
+
+                <!-- The Math Equation Display -->
+                <div class="my-4 py-4 px-6 bg-slate-950/70 border border-slate-800/80 rounded-2xl w-full flex items-center justify-center min-h-[100px]">
+                    <div id="math-expression" class="text-2xl sm:text-4xl text-indigo-100 tracking-wide">
+                        <!-- KaTeX Math rendered here -->
+                    </div>
+                </div>
+
+                <p id="problem-instruction" class="text-sm text-slate-400">
+                    Factor the trinomial into two binomial factors $(x + m)(x + n)$.
+                </p>
+            </div>
+
+            <!-- Guided Mode Container -->
+            <div id="guided-container" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="font-semibold text-slate-200 flex items-center text-base">
+                        <i class="fa-solid fa-compass text-indigo-400 mr-2"></i> Step-by-Step AC Method Guide
+                    </h3>
+                    <span id="step-indicator" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 border border-slate-700">
+                        Step 1 of 4
+                    </span>
+                </div>
+
+                <!-- STEP 1: Identify Coefficients / GCF -->
+                <div id="step-1-box" class="space-y-3 transition-all duration-300">
+                    <p id="step1-text" class="text-sm text-slate-300 font-medium">
+                        <span class="text-indigo-400 font-bold">Step 1:</span> Identify the coefficients $a$, $b$, and $c$ from $ax^2 + bx + c$.
+                    </p>
+
+                    <!-- Optional GCF Input Container for Level 3 -->
+                    <div id="step1-gcf-container" class="hidden bg-indigo-950/30 p-3 rounded-xl border border-indigo-800/40 max-w-md mb-3">
+                        <label class="block text-xs text-indigo-300 font-semibold mb-1">Greatest Common Factor (GCF) $k =$</label>
+                        <input type="number" id="step1-k" class="w-full bg-slate-950 border border-indigo-700/80 rounded-xl px-3 py-2 text-center text-indigo-200 focus:outline-none focus:border-indigo-500 font-mono text-sm" placeholder="GCF k">
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3 max-w-md">
+                        <div>
+                            <label id="step1-label-a" class="block text-xs text-slate-400 mb-1">$a =$</label>
+                            <input type="number" id="step1-a" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center text-slate-100 focus:outline-none focus:border-indigo-500 font-mono text-sm" placeholder="a">
+                        </div>
+                        <div>
+                            <label id="step1-label-b" class="block text-xs text-slate-400 mb-1">$b =$</label>
+                            <input type="number" id="step1-b" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center text-slate-100 focus:outline-none focus:border-indigo-500 font-mono text-sm" placeholder="b">
+                        </div>
+                        <div>
+                            <label id="step1-label-c" class="block text-xs text-slate-400 mb-1">$c =$</label>
+                            <input type="number" id="step1-c" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center text-slate-100 focus:outline-none focus:border-indigo-500 font-mono text-sm" placeholder="c">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Calculate AC Product -->
+                <div id="step-2-box" class="space-y-3 hidden transition-all duration-300 pt-3 border-t border-slate-800/60">
+                    <p class="text-sm text-slate-300 font-medium">
+                        <span class="text-indigo-400 font-bold">Step 2:</span> Multiply coefficient $a$ by constant $c$ ($a \cdot c$).
+                    </p>
+                    <div class="flex items-center space-x-3 max-w-xs">
+                        <span id="ac-formula-text" class="text-sm text-slate-400 font-mono">a × c =</span>
+                        <input type="number" id="step2-ac" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center text-slate-100 focus:outline-none focus:border-indigo-500 font-mono text-sm" placeholder="a × c">
+                    </div>
+                </div>
+
+                <!-- STEP 3: Find Factor Pair (m and n) -->
+                <div id="step-3-box" class="space-y-3 hidden transition-all duration-300 pt-3 border-t border-slate-800/60">
+                    <p class="text-sm text-slate-300 font-medium">
+                        <span class="text-indigo-400 font-bold">Step 3:</span> Find two numbers $m$ and $n$ that <span class="text-emerald-400 font-semibold">multiply to $ac$</span> and <span class="text-amber-400 font-semibold">add to $b$</span>.
+                    </p>
+                    <div class="grid grid-cols-2 gap-3 max-w-xs">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Factor $m$</label>
+                            <input type="number" id="step3-m" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center text-slate-100 focus:outline-none focus:border-indigo-500 font-mono text-sm" placeholder="m">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Factor $n$</label>
+                            <input type="number" id="step3-n" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-center text-slate-100 focus:outline-none focus:border-indigo-500 font-mono text-sm" placeholder="n">
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500">Tip: Use the Factor Pair Tool on the right side if you get stuck!</p>
+                </div>
+
+                <!-- STEP 4: Factor Each Group (Level 2: a != 1 or Level 3 with inner a != 1) -->
+                <div id="step-4-box" class="space-y-3 hidden transition-all duration-300 pt-3 border-t border-slate-800/60">
+                    <p class="text-sm text-slate-300 font-medium">
+                        <span class="text-indigo-400 font-bold">Step 4:</span> Split middle term and factor out the GCF from each group.
+                    </p>
+                    <div id="step-4-grouping-hint" class="space-y-2 mb-3 bg-indigo-950/30 p-3.5 rounded-xl border border-indigo-800/40">
+                        <p class="text-xs text-indigo-300 font-medium">
+                            <strong>Split trinomial:</strong> <span id="split-term-display" class="font-mono text-amber-300"></span>
+                        </p>
+                        <div id="grouping-step-math" class="text-sm text-indigo-100"></div>
+                    </div>
+                    <div class="max-w-md">
+                        <label class="block text-xs text-slate-400 mb-1">Factor each group separately:</label>
+                        <input type="text" id="step4-group-input" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-indigo-200 focus:outline-none focus:border-indigo-500 font-mono text-sm" placeholder="e.g. 2x(x + 3) + 5(x + 3)">
+                    </div>
+                    <p class="text-xs text-slate-500">Factor out GCF from first two terms and last two terms.</p>
+                </div>
+
+                <!-- STEP 5: Final Factored Answer -->
+                <div id="step-5-box" class="space-y-3 hidden transition-all duration-300 pt-3 border-t border-slate-800/60">
+                    <p class="text-sm text-slate-300 font-medium">
+                        <span id="step-final-title-num" class="text-indigo-400 font-bold">Step 4:</span> Write the complete factored expression.
+                    </p>
+                    <div class="max-w-md">
+                        <input type="text" id="guided-final-input" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center text-indigo-200 focus:outline-none focus:border-indigo-500 font-mono text-base" placeholder="e.g. (2x + 1)(x - 3)">
+                    </div>
+                </div>
+
+                <!-- Step Actions Footer -->
+                <div class="flex items-center justify-between pt-2">
+                    <button id="guided-check-btn" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-indigo-600/30 flex items-center space-x-2 text-sm">
+                        <span>Check Step</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                    <button id="guided-hint-btn" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-xl transition-colors">
+                        <i class="fa-regular fa-lightbulb text-amber-400 mr-1"></i> Give Hint
+                    </button>
+                </div>
+            </div>
+
+            <!-- Direct Practice Mode Container -->
+            <div id="direct-container" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5 hidden">
+                <h3 class="font-semibold text-slate-200 flex items-center text-base border-b border-slate-800 pb-3">
+                    <i class="fa-solid fa-bolt text-amber-400 mr-2"></i> Fast Answer Practice
+                </h3>
+
+                <div class="space-y-2">
+                    <label class="block text-sm text-slate-300 font-medium">Enter Factored Form:</label>
+                    <div class="relative max-w-md">
+                        <input type="text" id="direct-answer-input" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-indigo-100 font-mono text-lg focus:outline-none focus:border-indigo-500 pr-12" placeholder="(px + q)(rx + s)" autocomplete="off">
+                        <button id="direct-submit-btn" class="absolute right-2 top-2 bottom-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors">
+                            Submit
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500">Example format: <code class="text-indigo-400">(2x + 3)(x - 4)</code> or <code class="text-indigo-400">2(x + 3)(x - 4)</code></p>
+                </div>
+
+                <div class="flex items-center space-x-3 pt-2">
+                    <button id="direct-hint-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-xl transition-colors">
+                        <i class="fa-regular fa-lightbulb text-amber-400 mr-1.5"></i> Show Hint
+                    </button>
+                    <button id="reveal-solution-btn" class="px-4 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium rounded-xl transition-colors">
+                        <i class="fa-solid fa-eye mr-1.5"></i> Show Full Solution
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feedback / Alert Banner -->
+            <div id="feedback-card" class="hidden rounded-2xl p-4 border transition-all duration-300">
+                <div class="flex items-start space-x-3">
+                    <div id="feedback-icon-container" class="mt-0.5 text-lg"></div>
+                    <div class="flex-1">
+                        <h4 id="feedback-title" class="font-bold text-sm mb-1"></h4>
+                        <div id="feedback-body" class="text-xs sm:text-sm leading-relaxed"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solution Explanation Box (Accordion/Expandable) -->
+            <div id="solution-card" class="bg-slate-900/90 border border-indigo-900/50 rounded-2xl p-6 shadow-xl space-y-4 hidden">
+                <h4 class="font-bold text-indigo-300 text-sm flex items-center border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-book-open mr-2 text-indigo-400"></i> Full Step-by-Step Solution Breakdown
+                </h4>
+                <div id="solution-steps-content" class="space-y-3 text-sm text-slate-300">
+                    <!-- Dynamic rendering of full steps -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Visual Helpers & Factor Pair Tool (4 cols) -->
+        <aside class="lg:col-span-4 flex flex-col space-y-6">
+
+            <!-- Dynamic X-Factor / Diamond Method Visualizer Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col items-center">
+                <div class="flex items-center justify-between w-full border-b border-slate-800 pb-2.5 mb-4">
+                    <h3 class="font-semibold text-slate-200 text-sm flex items-center">
+                        <i class="fa-solid fa-gem text-amber-400 mr-2"></i> The Diamond / X-Method
+                    </h3>
+                    <button id="toggle-diamond-answers-btn" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium">
+                        Reveal Factors
+                    </button>
+                </div>
+
+                <!-- X Graphic Container -->
+                <div class="relative w-48 h-48 bg-slate-950 border border-slate-800 rounded-2xl p-2 flex items-center justify-center">
+                    <!-- SVG X background -->
+                    <svg class="absolute inset-0 w-full h-full stroke-slate-800" stroke-width="2">
+                        <line x1="10%" y1="10%" x2="90%" y2="90%" />
+                        <line x1="90%" y1="10%" x2="10%" y2="90%" />
+                    </svg>
+
+                    <!-- Top: AC -->
+                    <div class="absolute top-2 text-center">
+                        <span class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Product ($ac$)</span>
+                        <span id="diamond-top" class="text-base font-bold text-emerald-400 font-mono">?</span>
+                    </div>
+
+                    <!-- Bottom: B -->
+                    <div class="absolute bottom-2 text-center">
+                        <span id="diamond-bottom" class="text-base font-bold text-amber-400 font-mono">?</span>
+                        <span class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Sum ($b$)</span>
+                    </div>
+
+                    <!-- Left: Factor m -->
+                    <div class="absolute left-3 text-center">
+                        <span class="text-[9px] text-slate-500 font-medium block">Factor</span>
+                        <span id="diamond-left" class="text-sm font-bold text-indigo-300 font-mono">?</span>
+                    </div>
+
+                    <!-- Right: Factor n -->
+                    <div class="absolute right-3 text-center">
+                        <span class="text-[9px] text-slate-500 font-medium block">Factor</span>
+                        <span id="diamond-right" class="text-sm font-bold text-indigo-300 font-mono">?</span>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-400 text-center mt-3">
+                    Find 2 numbers on left & right that multiply to top ($ac$) and add to bottom ($b$).
+                </p>
+            </div>
+
+            <!-- Factor Pair Finder Calculator Helper -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <h3 class="font-semibold text-slate-200 text-sm flex items-center border-b border-slate-800 pb-2.5">
+                    <i class="fa-solid fa-calculator text-indigo-400 mr-2"></i> Factor Pair Calculator
+                </h3>
+
+                <p class="text-xs text-slate-400">
+                    Need help finding factors? Enter a number to generate all integer factor pairs & sums.
+                </p>
+
+                <div class="flex space-x-2">
+                    <input type="number" id="factor-tool-input" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-sm font-mono text-slate-100 focus:outline-none focus:border-indigo-500" placeholder="e.g. -24">
+                    <button id="factor-tool-calc-btn" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-colors">
+                        Find
+                    </button>
+                </div>
+
+                <div id="factor-tool-results" class="max-h-40 overflow-y-auto space-y-1 bg-slate-950 p-2 rounded-xl border border-slate-800 text-xs font-mono">
+                    <div class="text-slate-500 italic text-center py-2">Enter a number above</div>
+                </div>
+            </div>
+
+            <!-- Method Cheat Sheet Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                <h3 class="font-semibold text-slate-200 text-sm flex items-center border-b border-slate-800 pb-2.5">
+                    <i class="fa-solid fa-graduation-cap text-indigo-400 mr-2"></i> AC Method Quick Summary
+                </h3>
+
+                <div class="space-y-2 text-xs text-slate-300">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <strong class="text-indigo-400 font-semibold block mb-1">1. When $a = 1$: $x^2 + bx + c$</strong>
+                        Find $m, n$ where $m \cdot n = c$ and $m + n = b$.<br>
+                        Answer: <span class="text-emerald-300 font-mono">(x + m)(x + n)</span>
+                    </div>
+
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <strong class="text-indigo-400 font-semibold block mb-1">2. When $a \neq 1$: $ax^2 + bx + c$</strong>
+                        1. Find $m, n$ where $m \cdot n = a \cdot c$ and $m + n = b$.<br>
+                        2. Split middle term: $ax^2 + mx + nx + c$.<br>
+                        3. Factor by grouping terms in pairs!
+                    </div>
+
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <strong class="text-indigo-400 font-semibold block mb-1">3. GCF First: $k(ax^2 + bx + c)$</strong>
+                        1. Factor out GCF $k$ from all terms.<br>
+                        2. Apply AC method to remaining inner trinomial.<br>
+                        Answer: <span class="text-amber-300 font-mono">k(px + q)(rx + s)</span>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Global App State
+        const state = {
+            level: 'a1', // 'a1', 'aNot1', or 'gcf'
+            mode: 'guided', // 'guided' or 'direct'
+            currentProblem: null,
+            guidedStep: 1,
+            score: 0,
+            streak: 0,
+            revealDiamond: false,
+            userM: null,
+            userN: null
+        };
+
+        // DOM Element References
+        const elements = {
+            // Stats
+            streakCount: document.getElementById('streak-count'),
+            scoreCount: document.getElementById('score-count'),
+            resetStatsBtn: document.getElementById('reset-stats-btn'),
+            
+            // Level & Mode Controls
+            levelA1Btn: document.getElementById('level-a1-btn'),
+            levelANot1Btn: document.getElementById('level-aNot1-btn'),
+            levelGcfBtn: document.getElementById('level-gcf-btn'),
+            modeGuidedBtn: document.getElementById('mode-guided-btn'),
+            modeDirectBtn: document.getElementById('mode-direct-btn'),
+
+            // Problem Display
+            problemLevelBadge: document.getElementById('problem-level-badge'),
+            newProblemBtn: document.getElementById('new-problem-btn'),
+            mathExpression: document.getElementById('math-expression'),
+            problemInstruction: document.getElementById('problem-instruction'),
+
+            // Guided Mode
+            guidedContainer: document.getElementById('guided-container'),
+            stepIndicator: document.getElementById('step-indicator'),
+            step1Box: document.getElementById('step-1-box'),
+            step1Text: document.getElementById('step1-text'),
+            step1GcfContainer: document.getElementById('step1-gcf-container'),
+            step1K: document.getElementById('step1-k'),
+            step1A: document.getElementById('step1-a'),
+            step1B: document.getElementById('step1-b'),
+            step1C: document.getElementById('step1-c'),
+            step1LabelA: document.getElementById('step1-label-a'),
+            step1LabelB: document.getElementById('step1-label-b'),
+            step1LabelC: document.getElementById('step1-label-c'),
+            step2Box: document.getElementById('step-2-box'),
+            step3Box: document.getElementById('step-3-box'),
+            step4Box: document.getElementById('step-4-box'),
+            step5Box: document.getElementById('step-5-box'),
+            step2AC: document.getElementById('step2-ac'),
+            step3M: document.getElementById('step3-m'),
+            step3N: document.getElementById('step3-n'),
+            step4GroupInput: document.getElementById('step4-group-input'),
+            guidedFinalInput: document.getElementById('guided-final-input'),
+            guidedCheckBtn: document.getElementById('guided-check-btn'),
+            guidedHintBtn: document.getElementById('guided-hint-btn'),
+            step4GroupingHint: document.getElementById('step-4-grouping-hint'),
+            splitTermDisplay: document.getElementById('split-term-display'),
+            groupingStepMath: document.getElementById('grouping-step-math'),
+            stepFinalTitleNum: document.getElementById('step-final-title-num'),
+
+            // Direct Mode
+            directContainer: document.getElementById('direct-container'),
+            directAnswerInput: document.getElementById('direct-answer-input'),
+            directSubmitBtn: document.getElementById('direct-submit-btn'),
+            directHintBtn: document.getElementById('direct-hint-btn'),
+            revealSolutionBtn: document.getElementById('reveal-solution-btn'),
+
+            // Feedback & Solution
+            feedbackCard: document.getElementById('feedback-card'),
+            feedbackIconContainer: document.getElementById('feedback-icon-container'),
+            feedbackTitle: document.getElementById('feedback-title'),
+            feedbackBody: document.getElementById('feedback-body'),
+            solutionCard: document.getElementById('solution-card'),
+            solutionStepsContent: document.getElementById('solution-steps-content'),
+
+            // Side Tools
+            diamondTop: document.getElementById('diamond-top'),
+            diamondBottom: document.getElementById('diamond-bottom'),
+            diamondLeft: document.getElementById('diamond-left'),
+            diamondRight: document.getElementById('diamond-right'),
+            toggleDiamondAnswersBtn: document.getElementById('toggle-diamond-answers-btn'),
+            factorToolInput: document.getElementById('factor-tool-input'),
+            factorToolCalcBtn: document.getElementById('factor-tool-calc-btn'),
+            factorToolResults: document.getElementById('factor-tool-results')
+        };
+
+        function gcd(x, y) {
+            return y === 0 ? x : gcd(y, x % y);
+        }
+
+        /**
+         * Helper to generate random integer within inclusive range excluding 0 if specified
+         */
+        function getRandomInt(min, max, allowZero = false) {
+            let res = 0;
+            do {
+                res = Math.floor(Math.random() * (max - min + 1)) + min;
+            } while (!allowZero && res === 0);
+            return res;
+        }
+
+        /**
+         * Generates a trinomial:
+         * Level 1 (a=1): p = 1, r = 1, k = 1
+         * Level 2 (a!=1): p*r > 1, k = 1
+         * Level 3 (GCF): k > 1, with either inner a=1 or inner a!=1
+         */
+        function generateProblem() {
+            let p, q, r, s, k;
+
+            if (state.level === 'a1') {
+                k = 1;
+                p = 1;
+                r = 1;
+                q = getRandomInt(-9, 9, false);
+                s = getRandomInt(-9, 9, false);
+            } else if (state.level === 'aNot1') {
+                k = 1;
+                p = getRandomInt(2, 5, false);
+                r = getRandomInt(1, 4, false);
+                if (p === 1 && r === 1) p = 2;
+
+                q = getRandomInt(-8, 8, false);
+                s = getRandomInt(-8, 8, false);
+
+                while (gcd(Math.abs(p), Math.abs(q)) > 1) q = getRandomInt(-8, 8, false);
+                while (gcd(Math.abs(r), Math.abs(s)) > 1) s = getRandomInt(-8, 8, false);
+            } else {
+                // Level 3: GCF First
+                k = getRandomInt(2, 5, false);
+                
+                // 50% chance of inner a=1, 50% chance inner a>1
+                const innerAIs1 = Math.random() < 0.5;
+                if (innerAIs1) {
+                    p = 1;
+                    r = 1;
+                    q = getRandomInt(-7, 7, false);
+                    s = getRandomInt(-7, 7, false);
+                } else {
+                    p = getRandomInt(2, 4, false);
+                    r = getRandomInt(1, 3, false);
+                    if (p === 1 && r === 1) p = 2;
+
+                    q = getRandomInt(-6, 6, false);
+                    s = getRandomInt(-6, 6, false);
+
+                    while (gcd(Math.abs(p), Math.abs(q)) > 1) q = getRandomInt(-6, 6, false);
+                    while (gcd(Math.abs(r), Math.abs(s)) > 1) s = getRandomInt(-6, 6, false);
+                }
+            }
+
+            const innerA = p * r;
+            const innerM = p * s;
+            const innerN = q * r;
+            const innerB = innerM + innerN;
+            const innerC = q * s;
+            const innerAC = innerA * innerC;
+
+            // Expanded / Total coefficients displayed to the user
+            const a_total = k * innerA;
+            const b_total = k * innerB;
+            const c_total = k * innerC;
+
+            const latexPoly = formatPolynomialLatex(a_total, b_total, c_total);
+
+            state.currentProblem = {
+                k,
+                p, q, r, s,
+                a: innerA,
+                b: innerB,
+                c: innerC,
+                ac: innerAC,
+                m: innerM,
+                n: innerN,
+                a_total,
+                b_total,
+                c_total,
+                latexPoly
+            };
+
+            state.guidedStep = 1;
+            state.revealDiamond = false;
+
+            renderProblemUI();
+        }
+
+        /**
+         * Converts coefficients a, b, c to a beautifully formatted LaTeX string
+         */
+        function formatPolynomialLatex(a, b, c) {
+            let str = '';
+            // Term 1: ax^2
+            if (a === 1) str += 'x^2';
+            else if (a === -1) str += '-x^2';
+            else str += `${a}x^2`;
+
+            // Term 2: bx
+            if (b > 0) str += ` + ${b === 1 ? '' : b}x`;
+            else if (b < 0) str += ` - ${Math.abs(b) === 1 ? '' : Math.abs(b)}x`;
+
+            // Term 3: c
+            if (c > 0) str += ` + ${c}`;
+            else if (c < 0) str += ` - ${Math.abs(c)}`;
+
+            return str;
+        }
+
+        /**
+         * Renders inline KaTeX math ($...$) in a given DOM container
+         */
+        function renderMath(container = document.body) {
+            if (window.renderMathInElement) {
+                renderMathInElement(container, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false }
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        /**
+         * Renders current problem state onto the DOM
+         */
+        function renderProblemUI() {
+            const prob = state.currentProblem;
+            if (!prob) return;
+
+            // Render math polynomial using KaTeX
+            try {
+                katex.render(prob.latexPoly, elements.mathExpression, {
+                    throwOnError: false,
+                    displayMode: true
+                });
+            } catch (e) {
+                elements.mathExpression.textContent = prob.latexPoly;
+            }
+
+            // Update badge text and instruction according to level
+            if (state.level === 'a1') {
+                elements.problemLevelBadge.innerHTML = 'Simple AC Method ($a = 1$)';
+                elements.problemInstruction.innerHTML = 'Factor the trinomial into two binomial factors $(x + m)(x + n)$.';
+                elements.directAnswerInput.placeholder = '(x + m)(x + n)';
+            } else if (state.level === 'aNot1') {
+                elements.problemLevelBadge.innerHTML = 'Advanced AC Method ($a \\neq 1$)';
+                elements.problemInstruction.innerHTML = 'Factor the trinomial into two binomial factors $(px + q)(rx + s)$.';
+                elements.directAnswerInput.placeholder = '(px + q)(rx + s)';
+            } else {
+                elements.problemLevelBadge.innerHTML = 'GCF + AC Method ($k(ax^2 + bx + c)$)';
+                elements.problemInstruction.innerHTML = 'Factor out the GCF $k$ first, then factor the remaining trinomial into $k(px + q)(rx + s)$.';
+                elements.directAnswerInput.placeholder = 'k(px + q)(rx + s)';
+            }
+
+            // Reset Guided Steps Inputs & Visibility
+            resetGuidedForm();
+            
+            // Direct input reset
+            elements.directAnswerInput.value = '';
+
+            // Update Diamond Graphic
+            updateDiamondUI();
+
+            // Hide feedback & solution
+            hideFeedback();
+            elements.solutionCard.classList.add('hidden');
+
+            // Render inline math in updated elements
+            renderMath(elements.problemLevelBadge);
+            renderMath(elements.problemInstruction);
+            renderMath(elements.guidedContainer);
+        }
+
+        function updateDiamondUI() {
+            const prob = state.currentProblem;
+            if (!prob) return;
+
+            elements.diamondTop.textContent = prob.ac;
+            elements.diamondBottom.textContent = prob.b;
+
+            if (state.revealDiamond) {
+                elements.diamondLeft.textContent = prob.m;
+                elements.diamondRight.textContent = prob.n;
+                elements.toggleDiamondAnswersBtn.textContent = 'Hide Factors';
+            } else {
+                elements.diamondLeft.textContent = '?';
+                elements.diamondRight.textContent = '?';
+                elements.toggleDiamondAnswersBtn.textContent = 'Reveal Factors';
+            }
+        }
+
+        /**
+         * Parses a linear binomial phrase like "2x+1", "x-3", "-x+4"
+         */
+        function parseBinomial(str) {
+            str = str.replace(/\s+/g, '');
+            // Case 1: px + q
+            let m = str.match(/^([+-]?\d*)x([+-]\d+)$/);
+            if (m) {
+                let pStr = m[1];
+                let qStr = m[2];
+                let p = 1;
+                if (pStr === '-') p = -1;
+                else if (pStr === '+' || pStr === '') p = 1;
+                else p = parseInt(pStr, 10);
+
+                let q = parseInt(qStr, 10);
+                return { p, q };
+            }
+
+            // Case 2: q + px
+            m = str.match(/^([+-]?\d+)([+-]\d*)x$/);
+            if (m) {
+                let q = parseInt(m[1], 10);
+                let pStr = m[2];
+                let p = 1;
+                if (pStr === '-') p = -1;
+                else if (pStr === '+' || pStr === '') p = 1;
+                else p = parseInt(pStr, 10);
+
+                return { p, q };
+            }
+
+            return null;
+        }
+
+        /**
+         * Validates final factored answer string:
+         * Works for (x+m)(x+n), (px+q)(rx+s), and k(px+q)(rx+s)
+         */
+        function validateFactoredAnswer(userStr, prob) {
+            if (!userStr) return { valid: false, message: 'Please enter your answer.' };
+
+            let str = userStr.toLowerCase().replace(/\s+/g, '').replace(/\[/g, '(').replace(/\]/g, ')');
+
+            // Must match structure: optional leading integer k, then two binomials
+            if (!/^(-?\d+)?\([^)]+\)\([^)]+\)$/.test(str)) {
+                return { 
+                    valid: false, 
+                    message: state.level === 'gcf' 
+                        ? 'Answer should be in the form k(px + q)(rx + s), e.g. 2(x + 1)(x - 3).' 
+                        : 'Answer should be in the form (px + q)(rx + s), e.g. (2x + 1)(x - 3).' 
+                };
+            }
+
+            const parenMatches = str.match(/\(([^)]+)\)/g);
+            if (!parenMatches || parenMatches.length !== 2) {
+                return { valid: false, message: 'Answer must contain exactly two parenthesized binomial factors.' };
+            }
+
+            // Check that GCF is factored out from inside each binomial
+            for (let pm of parenMatches) {
+                const inner = pm.slice(1, -1);
+                const parsed = parseBinomial(inner);
+                if (!parsed) {
+                    return { valid: false, message: `Invalid binomial term "${inner}". Expected form like (2x + 1) or (x - 3).` };
+                }
+                if (gcd(Math.abs(parsed.p), Math.abs(parsed.q)) > 1) {
+                    return { valid: false, message: `The binomial (${inner}) is not fully factored! Factor out the common term completely.` };
+                }
+            }
+
+            // Evaluate algebraic equivalence against total polynomial
+            let evalStr = str.replace(/\)\(/g, ')*(')
+                             .replace(/(\d)([a-z\(])/g, '$1*$2')
+                             .replace(/([a-z\)])(\d)/g, '$1*$2')
+                             .replace(/([a-z])(\()/g, '$1*$2')
+                             .replace(/(\))([a-z])/g, '$1*$2');
+
+            const testVals = [0, 1, 3, -2, -5];
+            try {
+                for (const x of testVals) {
+                    const expected = prob.a_total * x * x + prob.b_total * x + prob.c_total;
+                    const expr = evalStr.replace(/x/g, `(${x})`);
+                    if (/[^0-9\+\-\*\/\(\)\.]/.test(expr)) return { valid: false, message: 'Invalid characters in math expression.' };
+                    const result = new Function(`return ${expr};`)();
+                    if (Math.abs(result - expected) > 0.0001) {
+                        return { valid: false, message: 'The expression is not equivalent to the original trinomial. Check terms and signs.' };
+                    }
+                }
+                return { valid: true };
+            } catch (e) {
+                return { valid: false, message: 'Could not evaluate expression. Check parentheses and operators.' };
+            }
+        }
+
+        function handleCorrectAnswer() {
+            let earnedXP = 100;
+            if (state.level === 'aNot1') earnedXP = 250;
+            if (state.level === 'gcf') earnedXP = 400;
+
+            state.score += earnedXP;
+            state.streak += 1;
+            updateStatsUI();
+
+            state.revealDiamond = true;
+            updateDiamondUI();
+
+            showFeedback('success', '🎉 Correct! Solved!', `Outstanding work! You earned +${earnedXP} XP. Streak is now ${state.streak}!`);
+            renderSolutionSteps();
+            elements.solutionCard.classList.remove('hidden');
+        }
+
+        function resetGuidedForm() {
+            if (elements.step1K) elements.step1K.value = '';
+            elements.step1A.value = '';
+            elements.step1B.value = '';
+            elements.step1C.value = '';
+            elements.step2AC.value = '';
+            elements.step3M.value = '';
+            elements.step3N.value = '';
+            if (elements.step4GroupInput) elements.step4GroupInput.value = '';
+            elements.guidedFinalInput.value = '';
+
+            // Step visibility
+            elements.step1Box.classList.remove('hidden');
+            elements.step2Box.classList.add('hidden');
+            elements.step3Box.classList.add('hidden');
+            elements.step4Box.classList.add('hidden');
+            elements.step5Box.classList.add('hidden');
+
+            // Configure Step 1 UI according to Level
+            if (state.level === 'gcf') {
+                elements.step1GcfContainer.classList.remove('hidden');
+                elements.step1Text.innerHTML = `<span class="text-indigo-400 font-bold">Step 1:</span> Identify and factor out the Greatest Common Factor ($k$), then find the remaining inner coefficients ($a, b, c$).`;
+                elements.step1LabelA.innerHTML = `inner $a =$`;
+                elements.step1LabelB.innerHTML = `inner $b =$`;
+                elements.step1LabelC.innerHTML = `inner $c =$`;
+            } else {
+                elements.step1GcfContainer.classList.add('hidden');
+                elements.step1Text.innerHTML = `<span class="text-indigo-400 font-bold">Step 1:</span> Identify the coefficients $a$, $b$, and $c$ from $ax^2 + bx + c$.`;
+                elements.step1LabelA.innerHTML = `$a =$`;
+                elements.step1LabelB.innerHTML = `$b =$`;
+                elements.step1LabelC.innerHTML = `$c =$`;
+            }
+
+            const maxSteps = getMaxGuidedSteps();
+            elements.stepIndicator.textContent = `Step 1 of ${maxSteps}`;
+            elements.guidedCheckBtn.innerHTML = `<span>Check Step 1</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+        }
+
+        function getMaxGuidedSteps() {
+            const prob = state.currentProblem;
+            if (!prob) return 4;
+            if (state.level === 'a1') return 4;
+            if (state.level === 'aNot1') return 5;
+            // Level 3: GCF
+            return prob.a === 1 ? 4 : 5;
+        }
+
+        /**
+         * Validates expression where user factors out GCF from each group:
+         * e.g., 2x(x + 3) + 5(x + 3) or 2[2x(x + 3) + 5(x + 3)]
+         */
+        function validateGroupFactoredAnswer(userStr, prob, m, n) {
+            if (!userStr) return { valid: false, message: 'Please enter your group-factored expression.' };
+
+            let str = userStr.toLowerCase().replace(/\s+/g, '').replace(/\[/g, '(').replace(/\]/g, ')');
+
+            // Detect if student entered final factored form directly
+            const outerParenPair = str.match(/^([+-]?\d+)?\([^)]+\)\([^)]+\)$/);
+            if (outerParenPair) {
+                return { 
+                    valid: false, 
+                    message: 'You entered the final factored form! First, factor each group separately, e.g. 2x(x + 3) + 5(x + 3).' 
+                };
+            }
+
+            // Standardize implicit multiplication for math evaluation
+            let evalStr = str.replace(/\)\(/g, ')*(')
+                             .replace(/(\d)([a-z\(])/g, '$1*$2')
+                             .replace(/([a-z\)])(\d)/g, '$1*$2')
+                             .replace(/([a-z])(\()/g, '$1*$2')
+                             .replace(/(\))([a-z])/g, '$1*$2');
+
+            // Evaluate expression equivalence at test values x = 2, 5, -3
+            const testVals = [2, 5, -3];
+            try {
+                for (const testVal of testVals) {
+                    const expectedVal = prob.a_total * Math.pow(testVal, 2) + prob.b_total * testVal + prob.c_total;
+                    const exprWithVal = evalStr.replace(/x/g, `(${testVal})`);
+                    if (/[^0-9\+\-\*\/\(\)\.]/.test(exprWithVal)) {
+                        return { valid: false, message: 'Invalid format. Use numbers, x, and parentheses.' };
+                    }
+                    const userVal = new Function(`return ${exprWithVal};`)();
+                    if (Math.abs(userVal - expectedVal) > 0.0001) {
+                        return { valid: false, message: 'The expression does not equal the original polynomial. Check your grouping GCFs.' };
+                    }
+                }
+            } catch (e) {
+                return { valid: false, message: 'Could not evaluate expression. Check parentheses and symbols.' };
+            }
+
+            // Structural pattern: must contain parentheses for grouping
+            const parenMatches = str.match(/\(([^)]+)\)/g);
+            if (!parenMatches || parenMatches.length < 2) {
+                return { 
+                    valid: false, 
+                    message: 'Be sure to factor out the GCF from both groups using parentheses, e.g. 2x(x + 3) + 5(x + 3).' 
+                };
+            }
+
+            return { valid: true };
+        }
+
+        /**
+         * Renders split term math expression for Step 4
+         */
+        function renderGroupingStepDisplay(prob, m, n) {
+            const termM = m >= 0 ? `+ ${m}x` : `- ${Math.abs(m)}x`;
+            const termN = n >= 0 ? `+ ${n}x` : `- ${Math.abs(n)}x`;
+            const termC = prob.c >= 0 ? `+ ${prob.c}` : `- ${Math.abs(prob.c)}`;
+
+            let textStr = `(${prob.a}x² ${termM}) + (${termN} ${termC})`;
+            let latexGroup = `(${prob.a}x^2 ${m >= 0 ? '+' : ''} ${m}x) + (${n >= 0 ? '+' : ''}${n}x ${prob.c >= 0 ? '+' : ''} ${prob.c})`;
+
+            if (prob.k > 1) {
+                textStr = `${prob.k} [ ` + textStr + ` ]`;
+                latexGroup = `${prob.k} \\left[ (${prob.a}x^2 ${m >= 0 ? '+' : ''} ${m}x) + (${n >= 0 ? '+' : ''}${n}x ${prob.c >= 0 ? '+' : ''} ${prob.c}) \\right]`;
+            }
+
+            elements.splitTermDisplay.textContent = textStr;
+            try {
+                katex.render(`\\Rightarrow ` + latexGroup, elements.groupingStepMath, { throwOnError: false });
+            } catch (e) {
+                elements.groupingStepMath.textContent = latexGroup;
+            }
+        }
+
+        /**
+         * Validates Guided Mode steps sequentially
+         */
+        function checkGuidedStep() {
+            const prob = state.currentProblem;
+            const maxSteps = getMaxGuidedSteps();
+            hideFeedback();
+
+            if (state.guidedStep === 1) {
+                const userA = parseInt(elements.step1A.value);
+                const userB = parseInt(elements.step1B.value);
+                const userC = parseInt(elements.step1C.value);
+
+                if (state.level === 'gcf') {
+                    const userK = parseInt(elements.step1K.value);
+                    if (isNaN(userK) || isNaN(userA) || isNaN(userB) || isNaN(userC)) {
+                        showFeedback('warning', 'Incomplete', 'Please fill in the GCF (k) and all three inner coefficients (a, b, c).');
+                        return;
+                    }
+
+                    if (userK === prob.k && userA === prob.a && userB === prob.b && userC === prob.c) {
+                        showFeedback('success', 'Great Job!', `Correct! GCF = ${prob.k}. Inner trinomial is ${formatPolynomialLatex(prob.a, prob.b, prob.c)}. Moving to Step 2.`);
+                        advanceToStep2(maxSteps);
+                    } else {
+                        showFeedback('error', 'Incorrect Values', `Check GCF (k = ${prob.k}) and the inner coefficients after dividing out ${prob.k}.`);
+                    }
+                } else {
+                    if (isNaN(userA) || isNaN(userB) || isNaN(userC)) {
+                        showFeedback('warning', 'Incomplete', 'Please fill in all three coefficient values (a, b, c).');
+                        return;
+                    }
+
+                    if (userA === prob.a && userB === prob.b && userC === prob.c) {
+                        showFeedback('success', 'Great Job!', 'Correct coefficients! Moving to Step 2.');
+                        advanceToStep2(maxSteps);
+                    } else {
+                        showFeedback('error', 'Incorrect Coefficients', 'Double check signs (+ / -) and values for a, b, and c.');
+                    }
+                }
+            } else if (state.guidedStep === 2) {
+                const userAC = parseInt(elements.step2AC.value);
+
+                if (isNaN(userAC)) {
+                    showFeedback('warning', 'Incomplete', 'Please enter the product of a × c.');
+                    return;
+                }
+
+                if (userAC === prob.ac) {
+                    showFeedback('success', 'Spot On!', `Correct! ${prob.a} × ${prob.c} = ${prob.ac}. Now find the factor pair.`);
+                    state.guidedStep = 3;
+                    elements.step3Box.classList.remove('hidden');
+                    elements.stepIndicator.textContent = `Step 3 of ${maxSteps}`;
+                    elements.guidedCheckBtn.innerHTML = `<span>Check Step 3</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+                } else {
+                    showFeedback('error', 'Incorrect AC Product', `Remember: a = ${prob.a} and c = ${prob.c}. Multiply them together.`);
+                }
+            } else if (state.guidedStep === 3) {
+                const userM = parseInt(elements.step3M.value);
+                const userN = parseInt(elements.step3N.value);
+
+                if (isNaN(userM) || isNaN(userN)) {
+                    showFeedback('warning', 'Incomplete', 'Please enter both factors m and n.');
+                    return;
+                }
+
+                if (userM * userN === prob.ac && userM + userN === prob.b) {
+                    showFeedback('success', 'Awesome!', `Correct factors! ${userM} × ${userN} = ${prob.ac} and ${userM} + ${userN} = ${prob.b}.`);
+                    state.userM = userM;
+                    state.userN = userN;
+
+                    const isSimpleInner = (state.level === 'a1') || (state.level === 'gcf' && prob.a === 1);
+                    if (isSimpleInner) {
+                        state.guidedStep = 4;
+                        elements.step5Box.classList.remove('hidden');
+                        elements.stepFinalTitleNum.textContent = 'Step 4';
+                        elements.stepIndicator.textContent = `Step 4 of ${maxSteps}`;
+                        elements.guidedCheckBtn.innerHTML = `<span>Verify Final Answer</span> <i class="fa-solid fa-check text-xs"></i>`;
+                    } else {
+                        state.guidedStep = 4;
+                        elements.step4Box.classList.remove('hidden');
+                        renderGroupingStepDisplay(prob, userM, userN);
+                        elements.stepIndicator.textContent = `Step 4 of ${maxSteps}`;
+                        elements.guidedCheckBtn.innerHTML = `<span>Check Group Factoring</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+                    }
+                } else {
+                    showFeedback('error', 'Factor Pair Incorrect', `Your factors must multiply to ${prob.ac} AND add up to ${prob.b}. Try again or check the calculator!`);
+                }
+            } else if (state.guidedStep === 4) {
+                const isSimpleInner = (state.level === 'a1') || (state.level === 'gcf' && prob.a === 1);
+                if (isSimpleInner) {
+                    // Step 4 is Final Answer for simple inner trinomials
+                    const userAns = elements.guidedFinalInput.value.trim();
+                    const validation = validateFactoredAnswer(userAns, prob);
+                    if (validation.valid) {
+                        handleCorrectAnswer();
+                    } else {
+                        showFeedback('error', 'Not Quite Right', validation.message);
+                    }
+                } else {
+                    // Step 4 is Group Factoring for a != 1
+                    const groupAns = elements.step4GroupInput.value.trim();
+                    const validation = validateGroupFactoredAnswer(groupAns, prob, state.userM, state.userN);
+                    if (validation.valid) {
+                        showFeedback('success', 'Great Grouping!', 'Correct group factoring! Now write the complete final factored form.');
+                        state.guidedStep = 5;
+                        elements.step5Box.classList.remove('hidden');
+                        elements.stepFinalTitleNum.textContent = 'Step 5';
+                        elements.stepIndicator.textContent = `Step 5 of 5`;
+                        elements.guidedCheckBtn.innerHTML = `<span>Verify Final Answer</span> <i class="fa-solid fa-check text-xs"></i>`;
+                    } else {
+                        showFeedback('error', 'Group Factoring Check', validation.message);
+                    }
+                }
+            } else if (state.guidedStep === 5) {
+                // Step 5 is Final Answer for a != 1
+                const userAns = elements.guidedFinalInput.value.trim();
+                const validation = validateFactoredAnswer(userAns, prob);
+                if (validation.valid) {
+                    handleCorrectAnswer();
+                } else {
+                    showFeedback('error', 'Not Quite Right', validation.message);
+                }
+            }
+        }
+
+        function advanceToStep2(maxSteps) {
+            state.guidedStep = 2;
+            elements.step2Box.classList.remove('hidden');
+            elements.stepIndicator.textContent = `Step 2 of ${maxSteps}`;
+            elements.guidedCheckBtn.innerHTML = `<span>Check Step 2</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+        }
+
+        /**
+         * Renders detailed step-by-step math explanation card
+         */
+        function renderSolutionSteps() {
+            const prob = state.currentProblem;
+            if (!prob) return;
+
+            let html = '';
+
+            if (prob.k > 1) {
+                html += `
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                        <p class="text-xs text-slate-400 font-bold">1. Given Polynomial:</p>
+                        <p class="text-indigo-200 font-mono">${formatPolynomialLatex(prob.a_total, prob.b_total, prob.c_total)}</p>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                        <p class="text-xs text-slate-400 font-bold">2. Factor out Greatest Common Factor (GCF $k = ${prob.k}$):</p>
+                        <p class="text-slate-300 font-mono">$${prob.k}(${formatPolynomialLatex(prob.a, prob.b, prob.c)})$</p>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                        <p class="text-xs text-slate-400 font-bold">3. AC Product & Sum Target for Inner Trinomial:</p>
+                        <p class="text-slate-300">Multiply inner $a \\cdot c = (${prob.a})(${prob.c}) = ${prob.ac}$. Need two numbers multiplying to $${prob.ac}$ and adding to $${prob.b}$.</p>
+                        <p class="text-emerald-400 font-semibold font-mono">Found Factors: $m = ${prob.m}$, $n = ${prob.n}$</p>
+                    </div>
+                `;
+
+                if (prob.a === 1) {
+                    html += `
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                            <p class="text-xs text-slate-400 font-bold">4. Final Factored Form ($k(x + m)(x + n)$):</p>
+                            <p class="text-emerald-300 font-bold font-mono text-base">${prob.k}(x ${prob.m >= 0 ? '+ ' + prob.m : '- ' + Math.abs(prob.m)})(x ${prob.n >= 0 ? '+ ' + prob.n : '- ' + Math.abs(prob.n)})</p>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                            <p class="text-xs text-slate-400 font-bold">4. Split Middle Term & Factor by Grouping:</p>
+                            <p class="text-slate-300">Rewrite inner middle term $${prob.b}x$ as $${prob.m}x + ${prob.n}x$:</p>
+                            <p class="text-amber-300 font-mono">$${prob.k}[${prob.a}x^2 + ${prob.m}x + ${prob.n}x + ${prob.c}]$</p>
+                            <p class="text-slate-300">Factor out GCF from each binomial group:</p>
+                            <p class="text-indigo-300 font-mono">$${prob.k}[${prob.p}x(${prob.r}x + ${prob.s}) ${prob.q >= 0 ? '+ ' + prob.q : '- ' + Math.abs(prob.q)}(${prob.r}x + ${prob.s})]$</p>
+                            <p class="text-emerald-300 font-bold font-mono text-base mt-2">Final Answer: ${prob.k}(${formatBinomial(prob.p, prob.q)})(${formatBinomial(prob.r, prob.s)})</p>
+                        </div>
+                    `;
+                }
+            } else {
+                // Level 1 or Level 2
+                html += `
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                        <p class="text-xs text-slate-400 font-bold">1. Given Polynomial:</p>
+                        <p class="text-indigo-200 font-mono">${formatPolynomialLatex(prob.a, prob.b, prob.c)}</p>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                        <p class="text-xs text-slate-400 font-bold">2. AC Product & Sum Target:</p>
+                        <p class="text-slate-300">Multiply $a \\cdot c = (${prob.a})(${prob.c}) = ${prob.ac}$. Need two numbers that multiply to $${prob.ac}$ and add to $${prob.b}$.</p>
+                        <p class="text-emerald-400 font-semibold font-mono">Found Factors: $m = ${prob.m}$, $n = ${prob.n}$</p>
+                    </div>
+                `;
+
+                if (prob.a === 1) {
+                    html += `
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                            <p class="text-xs text-slate-400 font-bold">3. Direct Binomial Substitution ($a = 1$):</p>
+                            <p class="text-emerald-300 font-bold font-mono text-base">(x ${prob.m >= 0 ? '+ ' + prob.m : '- ' + Math.abs(prob.m)})(x ${prob.n >= 0 ? '+ ' + prob.n : '- ' + Math.abs(prob.n)})</p>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                            <p class="text-xs text-slate-400 font-bold">3. Split Middle Term & Factor by Grouping ($a \\neq 1$):</p>
+                            <p class="text-slate-300">Rewrite $${prob.b}x$ as $${prob.m}x + ${prob.n}x$:</p>
+                            <p class="text-amber-300 font-mono">$${prob.a}x^2 + ${prob.m}x + ${prob.n}x + ${prob.c}$</p>
+                            <p class="text-slate-300">Group pairs:</p>
+                            <p class="text-indigo-300 font-mono">$(${prob.a}x^2 + ${prob.m}x) + (${prob.n}x + ${prob.c})$</p>
+                            <p class="text-slate-300">Factor out GCF from each binomial:</p>
+                            <p class="text-indigo-300 font-mono">$${prob.p}x(${prob.r}x + ${prob.s}) ${prob.q >= 0 ? '+ ' + prob.q : '- ' + Math.abs(prob.q)}(${prob.r}x + ${prob.s})$</p>
+                            <p class="text-emerald-300 font-bold font-mono text-base mt-2">Final Answer: (${formatBinomial(prob.p, prob.q)})(${formatBinomial(prob.r, prob.s)})</p>
+                        </div>
+                    `;
+                }
+            }
+
+            elements.solutionStepsContent.innerHTML = html;
+            renderMath(elements.solutionStepsContent);
+        }
+
+        function formatBinomial(coeffX, constTerm) {
+            let str = '';
+            if (coeffX === 1) str += 'x';
+            else if (coeffX === -1) str += '-x';
+            else str += `${coeffX}x`;
+
+            if (constTerm >= 0) str += ` + ${constTerm}`;
+            else str += ` - ${Math.abs(constTerm)}`;
+
+            return str;
+        }
+
+        function showFeedback(type, title, message) {
+            elements.feedbackCard.classList.remove('hidden', 'bg-emerald-950/40', 'border-emerald-800/60', 'bg-red-950/40', 'border-red-800/60', 'bg-amber-950/40', 'border-amber-800/60');
+
+            if (type === 'success') {
+                elements.feedbackCard.classList.add('bg-emerald-950/40', 'border-emerald-800/60');
+                elements.feedbackIconContainer.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+                elements.feedbackTitle.className = 'font-bold text-sm mb-1 text-emerald-300';
+            } else if (type === 'error') {
+                elements.feedbackCard.classList.add('bg-red-950/40', 'border-red-800/60');
+                elements.feedbackIconContainer.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-400"></i>`;
+                elements.feedbackTitle.className = 'font-bold text-sm mb-1 text-red-300';
+            } else {
+                elements.feedbackCard.classList.add('bg-amber-950/40', 'border-amber-800/60');
+                elements.feedbackIconContainer.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i>`;
+                elements.feedbackTitle.className = 'font-bold text-sm mb-1 text-amber-300';
+            }
+
+            elements.feedbackTitle.textContent = title;
+            elements.feedbackBody.textContent = message;
+        }
+
+        function hideFeedback() {
+            elements.feedbackCard.classList.add('hidden');
+        }
+
+        function updateStatsUI() {
+            elements.streakCount.textContent = state.streak;
+            elements.scoreCount.textContent = state.score;
+        }
+
+        /**
+         * Calculates factor pairs of given integer for the helper sidebar
+         */
+        function calculateFactorPairs() {
+            const num = parseInt(elements.factorToolInput.value);
+            if (isNaN(num) || num === 0) {
+                elements.factorToolResults.innerHTML = `<div class="text-amber-400 italic text-center py-2">Please enter a valid non-zero integer</div>`;
+                return;
+            }
+
+            const absNum = Math.abs(num);
+            const pairs = [];
+
+            for (let i = 1; i <= Math.sqrt(absNum); i++) {
+                if (absNum % i === 0) {
+                    const j = absNum / i;
+                    if (num > 0) {
+                        pairs.push([i, j]);
+                        pairs.push([-i, -j]);
+                    } else {
+                        pairs.push([i, -j]);
+                        pairs.push([-i, j]);
+                    }
+                }
+            }
+
+            let html = `<div class="text-[10px] text-slate-400 mb-1 border-b border-slate-800 pb-1 flex justify-between font-bold">
+                <span>Pair (m × n = ${num})</span>
+                <span>Sum (m + n)</span>
+            </div>`;
+
+            pairs.forEach(([m, n]) => {
+                const sum = m + n;
+                const isTargetSum = state.currentProblem && sum === state.currentProblem.b && (m * n === state.currentProblem.ac);
+                
+                html += `
+                    <div class="flex items-center justify-between py-1 px-1.5 rounded ${isTargetSum ? 'bg-indigo-900/60 text-indigo-200 border border-indigo-700/80 font-bold' : 'hover:bg-slate-900 text-slate-300'}">
+                        <span>(${m}) × (${n})</span>
+                        <span class="${isTargetSum ? 'text-amber-300' : 'text-slate-400'}">${sum}</span>
+                    </div>
+                `;
+            });
+
+            elements.factorToolResults.innerHTML = html;
+        }
+
+        function updateLevelTabButtons() {
+            const activeClass = 'flex-1 sm:flex-none px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md';
+            const inactiveClass = 'flex-1 sm:flex-none px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-slate-200';
+
+            elements.levelA1Btn.className = state.level === 'a1' ? activeClass : inactiveClass;
+            elements.levelANot1Btn.className = state.level === 'aNot1' ? activeClass : inactiveClass;
+            elements.levelGcfBtn.className = state.level === 'gcf' ? activeClass : inactiveClass;
+        }
+
+        function setupEventListeners() {
+            // Level selection
+            elements.levelA1Btn.addEventListener('click', () => {
+                state.level = 'a1';
+                updateLevelTabButtons();
+                generateProblem();
+            });
+
+            elements.levelANot1Btn.addEventListener('click', () => {
+                state.level = 'aNot1';
+                updateLevelTabButtons();
+                generateProblem();
+            });
+
+            elements.levelGcfBtn.addEventListener('click', () => {
+                state.level = 'gcf';
+                updateLevelTabButtons();
+                generateProblem();
+            });
+
+            // Mode selection
+            elements.modeGuidedBtn.addEventListener('click', () => {
+                state.mode = 'guided';
+                elements.modeGuidedBtn.className = 'px-3 py-1.5 rounded-lg font-medium text-xs bg-slate-800 text-indigo-300 border border-slate-700';
+                elements.modeDirectBtn.className = 'px-3 py-1.5 rounded-lg font-medium text-xs text-slate-400 hover:text-white';
+                elements.guidedContainer.classList.remove('hidden');
+                elements.directContainer.classList.add('hidden');
+            });
+
+            elements.modeDirectBtn.addEventListener('click', () => {
+                state.mode = 'direct';
+                elements.modeDirectBtn.className = 'px-3 py-1.5 rounded-lg font-medium text-xs bg-slate-800 text-indigo-300 border border-slate-700';
+                elements.modeGuidedBtn.className = 'px-3 py-1.5 rounded-lg font-medium text-xs text-slate-400 hover:text-white';
+                elements.directContainer.classList.remove('hidden');
+                elements.guidedContainer.classList.add('hidden');
+            });
+
+            // Problem Actions
+            elements.newProblemBtn.addEventListener('click', generateProblem);
+
+            // Guided Check
+            elements.guidedCheckBtn.addEventListener('click', checkGuidedStep);
+
+            // Direct Submit
+            elements.directSubmitBtn.addEventListener('click', () => {
+                const userAns = elements.directAnswerInput.value.trim();
+                const prob = state.currentProblem;
+                if (!userAns) {
+                    showFeedback('warning', 'Empty Answer', state.level === 'gcf' ? 'Please type your answer in the form k(px + q)(rx + s)' : 'Please type your answer in the form (px + q)(rx + s)');
+                    return;
+                }
+
+                const validation = validateFactoredAnswer(userAns, prob);
+                if (validation.valid) {
+                    handleCorrectAnswer();
+                } else {
+                    state.streak = 0;
+                    updateStatsUI();
+                    showFeedback('error', 'Incorrect Expression', validation.message);
+                }
+            });
+
+            // Hint Buttons
+            elements.guidedHintBtn.addEventListener('click', () => {
+                const prob = state.currentProblem;
+                if (state.guidedStep === 1) {
+                    if (state.level === 'gcf') {
+                        showFeedback('warning', 'Hint for Step 1', `Look for the largest number dividing ${prob.a_total}, ${prob.b_total}, and ${prob.c_total}. That is GCF k = ${prob.k}. Divide all terms by ${prob.k} to find inner a, b, c.`);
+                    } else {
+                        showFeedback('warning', 'Hint for Step 1', `Compare with ax² + bx + c. Look at the numbers in front of x² and x.`);
+                    }
+                } else if (state.guidedStep === 2) {
+                    showFeedback('warning', 'Hint for Step 2', `a = ${prob.a} and c = ${prob.c}. Multiply: ${prob.a} × ${prob.c} = ${prob.ac}.`);
+                } else if (state.guidedStep === 3) {
+                    showFeedback('warning', 'Hint for Step 3', `Look for two numbers that multiply to ${prob.ac} and add up to ${prob.b}.`);
+                    state.revealDiamond = true;
+                    updateDiamondUI();
+                } else if (state.guidedStep === 4) {
+                    const isSimpleInner = (state.level === 'a1') || (state.level === 'gcf' && prob.a === 1);
+                    if (isSimpleInner) {
+                        showFeedback('warning', 'Hint for Final Step', state.level === 'gcf' ? `Include the outer GCF k = ${prob.k}: ${prob.k}(x + m)(x + n).` : `Use factors (${prob.m}, ${prob.n}) to complete the binomial factors.`);
+                    } else {
+                        showFeedback('warning', 'Hint for Group Factoring', `Group as (ax² + mx) + (nx + c). Factor out GCF from each group, e.g. 2x(x + 3) + 5(x + 3).`);
+                    }
+                } else if (state.guidedStep === 5) {
+                    showFeedback('warning', 'Hint for Final Step', `Combine group factors and include GCF k = ${prob.k}: ${prob.k}(px + q)(rx + s).`);
+                }
+            });
+
+            elements.directHintBtn.addEventListener('click', () => {
+                const prob = state.currentProblem;
+                let hintMsg = `The product ac = ${prob.ac} and sum b = ${prob.b}. Factors are ${prob.m} and ${prob.n}.`;
+                if (state.level === 'gcf') {
+                    hintMsg = `First factor out GCF = ${prob.k}. ` + hintMsg;
+                }
+                showFeedback('warning', 'AC Method Hint', hintMsg);
+                state.revealDiamond = true;
+                updateDiamondUI();
+            });
+
+            elements.revealSolutionBtn.addEventListener('click', () => {
+                renderSolutionSteps();
+                elements.solutionCard.classList.remove('hidden');
+            });
+
+            // Factor Tool
+            elements.factorToolCalcBtn.addEventListener('click', calculateFactorPairs);
+            elements.factorToolInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') calculateFactorPairs();
+            });
+
+            // Diamond Reveal toggle
+            elements.toggleDiamondAnswersBtn.addEventListener('click', () => {
+                state.revealDiamond = !state.revealDiamond;
+                updateDiamondUI();
+            });
+
+            // Reset stats
+            elements.resetStatsBtn.addEventListener('click', () => {
+                state.score = 0;
+                state.streak = 0;
+                updateStatsUI();
+            });
+
+            // Keyboard Enter key handlers for inputs
+            const enterInputs = [
+                elements.step1C, elements.step2AC, elements.step3N, elements.step4GroupInput, elements.guidedFinalInput, elements.directAnswerInput
+            ];
+            enterInputs.forEach(input => {
+                if (input) {
+                    input.addEventListener('keyup', (e) => {
+                        if (e.key === 'Enter') {
+                            if (state.mode === 'guided') checkGuidedStep();
+                            else elements.directSubmitBtn.click();
+                        }
+                    });
+                }
+            });
+        }
+
+        window.onload = function() {
+            setupEventListeners();
+            generateProblem();
+            // Initial render for all static inline math tags
+            renderMath();
+        };
+    </script>
+</body>
+</html>
